@@ -1,4 +1,4 @@
-#include "snake.h"
+#include "snake.hpp"
 
 Snake::Snake(int l_blockSize) {
     m_size = l_blockSize;
