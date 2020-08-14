@@ -28,6 +28,8 @@ class Snake {
         void Lose(); // Handle losing here
         void ToggleLost();
 
+        Direction GetPhysicalDirection();
+
         void Extend(); // Grow the snake
         void Reset(); // Rest to starting position
 
