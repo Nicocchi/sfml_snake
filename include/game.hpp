@@ -1,7 +1,10 @@
 #pragma once
+#include <cstdlib>
+#include <ctime>
 #include "window.hpp"
 #include "world.hpp"
 #include "snake.hpp"
+#include "textbox.hpp"
 
 class Game {
   public:
@@ -23,4 +26,5 @@ class Game {
 
     World m_world;
     Snake m_snake;
+    Textbox m_textbox;
 };

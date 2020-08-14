@@ -1,6 +1,7 @@
 #include "snake.hpp"
 
-Snake::Snake(int l_blockSize) {
+Snake::Snake(int l_blockSize, Textbox *l_log) {
+    m_log = l_log;
     m_size = l_blockSize;
     m_bodyRect.setSize(sf::Vector2f(m_size - 1, m_size - 1));
     Reset();
@@ -33,28 +34,29 @@ sf::Vector2i Snake::GetPosition() {
 int Snake::GetLives() { return m_lives; }
 int Snake::GetScore() { return m_score; }
 
-void Snake::IncreaseScore() { m_score += 10; }
+void Snake::IncreaseScore() {
+    m_score += 10;
+    m_log->Add("You ate an apple. Score: " + std::to_string((long long)m_score));
+}
 bool Snake::HasLost() { return m_lost; }
 void Snake::Lose() { m_lost = true; }
 void Snake::ToggleLost() { m_lost = !m_lost; }
 
-Direction Snake::GetPhysicalDirection(){
-	if(m_snakeBody.size() <= 1){
-		return Direction::None;
-	}
+Direction Snake::GetPhysicalDirection() {
+    if (m_snakeBody.size() <= 1) {
+        return Direction::None;
+    }
 
-	SnakeSegment &head = m_snakeBody[0];
-	SnakeSegment &neck = m_snakeBody[1];
+    SnakeSegment &head = m_snakeBody[0];
+    SnakeSegment &neck = m_snakeBody[1];
 
-	if(head.position.x == neck.position.x){
-		return (head.position.y > neck.position.y 
-			? Direction::Down : Direction::Up);
-	} else if(head.position.y == neck.position.y){
-		return (head.position.x > neck.position.x 
-			? Direction::Right : Direction::Left);
-	}
+    if (head.position.x == neck.position.x) {
+        return (head.position.y > neck.position.y ? Direction::Down : Direction::Up);
+    } else if (head.position.y == neck.position.y) {
+        return (head.position.x > neck.position.x ? Direction::Right : Direction::Left);
+    }
 
-	return Direction::None;
+    return Direction::None;
 }
 
 void Snake::Extend() {
@@ -94,8 +96,12 @@ void Snake::Extend() {
 
 void Snake::Tick() {
     // Check if the snake should move or not based on size and direction
-    if (m_snakeBody.empty()) { return; }
-    if (m_dir == Direction::None) { return; }
+    if (m_snakeBody.empty()) {
+        return;
+    }
+    if (m_dir == Direction::None) {
+        return;
+    }
     Move();
     CheckCollision();
 }
@@ -109,7 +115,7 @@ void Snake::Move() {
         --m_snakeBody[0].position.x;
     } else if (m_dir == Direction::Right) {
         ++m_snakeBody[0].position.x;
-    } else if(m_dir == Direction::Up) {
+    } else if (m_dir == Direction::Up) {
         --m_snakeBody[0].position.y;
     } else if (m_dir == Direction::Down) {
         ++m_snakeBody[0].position.y;
@@ -117,7 +123,9 @@ void Snake::Move() {
 }
 
 void Snake::CheckCollision() {
-    if (m_snakeBody.size() < 5) { return; }
+    if (m_snakeBody.size() < 5) {
+        return;
+    }
     SnakeSegment &head = m_snakeBody.front();
     for (auto itr = m_snakeBody.begin() + 1; itr != m_snakeBody.end(); ++itr) {
         if (itr->position == head.position) {
@@ -134,11 +142,16 @@ void Snake::Cut(int l_segments) {
     }
 
     --m_lives;
-    if (!m_lives) { Lose(); return; }
+    if (!m_lives) {
+        Lose();
+        return;
+    }
 }
 
 void Snake::Render(sf::RenderWindow &l_window) {
-    if (m_snakeBody.empty()) { return; }
+    if (m_snakeBody.empty()) {
+        return;
+    }
 
     auto head = m_snakeBody.begin();
     m_bodyRect.setFillColor(sf::Color::Yellow);
